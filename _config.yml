@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: Tomato Leaf Disease Classifier
+description: AI-powered tomato leaf disease detection using deep learning
+show_downloads: true
