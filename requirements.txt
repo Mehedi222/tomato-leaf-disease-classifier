@@ -1,0 +1,7 @@
+streamlit
+tensorflow
+pillow
+numpy
+tf-keras-vis
+opencv-python
+matplotlib
