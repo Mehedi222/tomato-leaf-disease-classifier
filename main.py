@@ -140,7 +140,7 @@ def render_admin_dashboard():
         st.metric("Average Confidence", f"{get_average_confidence(conn):.1f}%")
 
     st.subheader("Model Performance")
-    st.metric("Final Validation Accuracy", "~96%")
+    st.metric("Final Validation Accuracy", "98%–98.6%")
     training_history_path = "assets/training_history.png"
     if os.path.exists(training_history_path):
         st.image(training_history_path, caption="Training history")
