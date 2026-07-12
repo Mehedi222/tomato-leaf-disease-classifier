@@ -1,3 +1,5 @@
+import numpy as np
+
 from predictions_log import (
     get_class_distribution,
     get_recent,
@@ -34,3 +36,11 @@ def test_get_recent_orders_newest_first_and_respects_limit(conn):
     assert recent[0]["predicted_class"] == "Leaf Spot"
     assert recent[0]["thumbnail"] == b"t3"
     assert recent[1]["predicted_class"] == "Early Blight"
+
+
+def test_log_prediction_coerces_numpy_confidence_to_float(conn):
+    log_prediction(conn, "Healthy", np.float32(91.5), b"t")
+
+    recent = get_recent(conn, limit=1)
+    assert isinstance(recent[0]["confidence"], float)
+    assert round(recent[0]["confidence"], 1) == 91.5

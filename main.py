@@ -22,7 +22,7 @@ from predictions_log import (
     init_db,
     log_prediction,
 )
-from theme import CLASS_COLORS
+from theme import CLASS_COLORS, PRIMARY_COLOR
 
 class_names = ["Early Blight", "Healthy", "Late Blight", "Leaf Spot"]
 
@@ -88,7 +88,7 @@ def render_predict():
                 predicted_class, confidence = predict(model, img_array)
 
             conn = get_connection()
-            log_prediction(conn, predicted_class, confidence, make_thumbnail(image))
+            log_prediction(conn, predicted_class, float(confidence), make_thumbnail(image))
             conn.close()
 
             class_color = CLASS_COLORS[predicted_class]
@@ -135,7 +135,7 @@ def render_admin_dashboard():
     st.subheader("Class Distribution")
     distribution = get_class_distribution(conn)
     if distribution:
-        st.bar_chart(pd.Series(distribution, name="Count"))
+        st.bar_chart(pd.Series(distribution, name="Count"), color=PRIMARY_COLOR)
     else:
         st.info("No predictions logged yet.")
 

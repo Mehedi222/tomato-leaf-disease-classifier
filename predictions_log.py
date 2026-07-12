@@ -24,7 +24,7 @@ def init_db(conn: sqlite3.Connection) -> None:
 def log_prediction(conn: sqlite3.Connection, predicted_class: str, confidence: float, thumbnail: bytes) -> None:
     conn.execute(
         "INSERT INTO predictions (predicted_class, confidence, thumbnail, created_at) VALUES (?, ?, ?, ?)",
-        (predicted_class, confidence, thumbnail, datetime.utcnow().isoformat()),
+        (predicted_class, float(confidence), thumbnail, datetime.utcnow().isoformat()),
     )
     conn.commit()
 
