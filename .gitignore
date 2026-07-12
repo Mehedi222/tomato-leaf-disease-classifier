@@ -27,6 +27,7 @@ env.bak/
 venv.bak/
 .streamlit/*
 !.streamlit/config.toml
+!.streamlit/secrets.toml.example
 .DS_Store
 *.pyc
 *.db
