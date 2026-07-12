@@ -1,0 +1,12 @@
+PRIMARY_COLOR = "#C0392B"
+BACKGROUND_COLOR = "#FFFFFF"
+SECONDARY_BACKGROUND_COLOR = "#F8F9FA"
+BORDER_COLOR = "#E2E5E9"
+TEXT_COLOR = "#1F2933"
+
+CLASS_COLORS = {
+    "Early Blight": "#E1A100",
+    "Healthy": "#2E7D32",
+    "Late Blight": "#922B21",
+    "Leaf Spot": "#C9702C",
+}
