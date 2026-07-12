@@ -5,9 +5,5 @@ numpy
 tf-keras-vis
 opencv-python
 matplotlib
-sqlalchemy
-psycopg2-binary
 bcrypt
-plotly
 pytest
-python-dotenv
