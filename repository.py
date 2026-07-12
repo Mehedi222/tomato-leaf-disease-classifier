@@ -19,6 +19,8 @@ def _apply_filters(query, start_date=None, end_date=None, predicted_class=None):
     if start_date is not None:
         query = query.filter(Prediction.created_at >= start_date)
     if end_date is not None:
+        if not isinstance(end_date, datetime):
+            end_date = datetime.combine(end_date, datetime.max.time())
         query = query.filter(Prediction.created_at <= end_date)
     if predicted_class is not None:
         query = query.filter(Prediction.predicted_class == predicted_class)

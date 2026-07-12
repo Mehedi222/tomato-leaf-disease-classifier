@@ -83,3 +83,14 @@ def test_get_today_count_excludes_past_predictions(session):
     log_prediction(session, user.id, "Healthy", 80.0, b"t")
 
     assert get_today_count(session) == 1
+
+
+def test_end_date_filter_includes_predictions_from_later_today(session):
+    user = _make_user(session)
+    log_prediction(session, user.id, "Healthy", 90.0, b"t")
+    today = datetime.utcnow().date()
+
+    assert get_total_count(session, end_date=today) == 1
+    assert get_class_distribution(session, end_date=today) == {"Healthy": 1}
+    assert get_confidence_values(session, end_date=today) == [90.0]
+    assert len(get_recent_predictions(session, end_date=today)) == 1

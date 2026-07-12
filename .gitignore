@@ -29,3 +29,4 @@ venv.bak/
 !.streamlit/config.toml
 .DS_Store
 *.pyc
+*.db

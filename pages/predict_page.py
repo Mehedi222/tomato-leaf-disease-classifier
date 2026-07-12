@@ -70,7 +70,7 @@ if uploaded_file is not None:
     image = image.resize((224, 224))
     st.image(image, caption="Uploaded Image", width=400)
 
-    if st.button("Predict"):
+    if st.button("Predict", type="primary"):
         img_array = np.array(image, dtype="float32")
 
         with st.spinner("Predicting..."):

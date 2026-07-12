@@ -11,7 +11,7 @@ def render_login():
             st.title("Login")
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
-            if st.button("Log in"):
+            if st.button("Log in", type="primary"):
                 session = get_session()
                 user = authenticate(session, username, password)
                 session.close()
@@ -48,6 +48,7 @@ def render_app():
 init_db()
 
 if "user" not in st.session_state:
-    render_login()
+    login_page = st.Page(render_login, title="Login", visibility="hidden")
+    st.navigation([login_page]).run()
 else:
     render_app()
