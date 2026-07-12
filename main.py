@@ -1,4 +1,5 @@
 import base64
+import os
 
 import cv2
 import matplotlib.cm as cm
@@ -15,7 +16,9 @@ from tf_keras_vis.utils.scores import CategoricalScore
 from admin_auth import check_admin_login
 from imaging import make_thumbnail
 from predictions_log import (
+    get_average_confidence,
     get_class_distribution,
+    get_confidence_series,
     get_connection,
     get_recent,
     get_total_count,
@@ -130,12 +133,42 @@ def render_admin_dashboard():
 
     conn = get_connection()
 
-    st.metric("Total Predictions", get_total_count(conn))
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Total Predictions", get_total_count(conn))
+    with col2:
+        st.metric("Average Confidence", f"{get_average_confidence(conn):.1f}%")
+
+    st.subheader("Model Performance")
+    st.metric("Final Validation Accuracy", "~96%")
+    training_history_path = "assets/training_history.png"
+    if os.path.exists(training_history_path):
+        st.image(training_history_path, caption="Training history")
+    else:
+        st.info("Training history chart not found — add it at assets/training_history.png")
 
     st.subheader("Class Distribution")
     distribution = get_class_distribution(conn)
     if distribution:
         st.bar_chart(pd.Series(distribution, name="Count"), color=PRIMARY_COLOR)
+    else:
+        st.info("No predictions logged yet.")
+
+    st.subheader("Confidence Over Time")
+    series = get_confidence_series(conn)
+    if series:
+        times = [row["created_at"] for row in series]
+        confidences = [row["confidence"] for row in series]
+        st.line_chart(pd.Series(confidences, index=times, name="Confidence (%)"), color=PRIMARY_COLOR)
+    else:
+        st.info("No predictions logged yet.")
+
+    st.subheader("Confidence Distribution")
+    if series:
+        confidence_values = [row["confidence"] for row in series]
+        counts, bin_edges = np.histogram(confidence_values, bins=10)
+        bin_labels = [f"{bin_edges[i]:.0f}-{bin_edges[i + 1]:.0f}" for i in range(len(bin_edges) - 1)]
+        st.bar_chart(pd.Series(counts, index=bin_labels, name="Count"), color=PRIMARY_COLOR)
     else:
         st.info("No predictions logged yet.")
 
