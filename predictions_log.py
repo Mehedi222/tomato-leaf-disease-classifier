@@ -47,3 +47,14 @@ def get_recent(conn: sqlite3.Connection, limit: int = 20) -> list:
     )
     columns = ["id", "predicted_class", "confidence", "thumbnail", "created_at"]
     return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+
+def get_average_confidence(conn: sqlite3.Connection) -> float:
+    cursor = conn.execute("SELECT AVG(confidence) FROM predictions")
+    result = cursor.fetchone()[0]
+    return float(result) if result is not None else 0.0
+
+
+def get_confidence_series(conn: sqlite3.Connection) -> list:
+    cursor = conn.execute("SELECT created_at, confidence FROM predictions ORDER BY id ASC")
+    return [{"created_at": row[0], "confidence": row[1]} for row in cursor.fetchall()]
