@@ -1,14 +1,18 @@
+import cv2
+import matplotlib.cm as cm
+import numpy as np
 import streamlit as st
 import tensorflow as tf
-import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import cv2
 from tensorflow.keras.models import load_model
 from tf_keras_vis.gradcam import Gradcam
 from tf_keras_vis.utils.model_modifiers import ReplaceToLinear
 from tf_keras_vis.utils.scores import CategoricalScore
+
+from db import get_session
+from imaging import make_thumbnail
+from repository import log_prediction
+from theme import CLASS_COLORS
 
 class_names = ["Early Blight", "Healthy", "Late Blight", "Leaf Spot"]
 
@@ -33,12 +37,7 @@ def predict(model, image):
     if len(img_array.shape) == 3:
         img_array = np.expand_dims(img_array, 0)
 
-    print(
-        f"Image shape: {img_array.shape}, Min: {img_array.min():.4f}, Max: {img_array.max():.4f}"
-    )
-
     predictions = model.predict(img_array, verbose=0)
-    print(f"Predictions: {predictions[0]}")
 
     predicted_class = class_names[np.argmax(predictions[0])]
     confidence = round(100 * (np.max(predictions[0])), 2)
@@ -77,7 +76,21 @@ if uploaded_file is not None:
         with st.spinner("Predicting..."):
             predicted_class, confidence = predict(model, img_array)
 
-        st.write(f"## Predicted class: *{predicted_class}*")
+        db_session = get_session()
+        log_prediction(
+            db_session,
+            st.session_state["user"]["id"],
+            predicted_class,
+            confidence,
+            make_thumbnail(image),
+        )
+        db_session.close()
+
+        class_color = CLASS_COLORS[predicted_class]
+        st.markdown(
+            f"## Predicted class: <span style='color:{class_color}'>*{predicted_class}*</span>",
+            unsafe_allow_html=True,
+        )
         st.write(f"## Confidence: {confidence:.2f}%")
 
         class_index = class_names.index(predicted_class)
